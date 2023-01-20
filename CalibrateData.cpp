@@ -20,7 +20,20 @@ struct macID_signalStrength{
 
 };
 
-void CalibrateData(filesystem::path path){
+
+vector<macID_signalStrength> calibrateData(vector<macID_signalStrength> x){ 
+    for(int i = 0; i < x.size(); i++){
+       double sum = 0; 
+       sum = accumulate(x[i].signalStrengths.begin(), x[i].signalStrengths.end(), 0);
+       sum = sum / x[i].signalStrengths.size();
+       x[i].signalStrengths.clear();
+       x[i].signalStrengths.push_back(int(sum));
+    }
+    return x;
+}
+
+
+vector<macID_signalStrength> sortData(filesystem::path path){
     macID_signalStrength x;
     ifstream iFile;
     string holder, newMacAddress;
@@ -71,23 +84,27 @@ void CalibrateData(filesystem::path path){
                 }
             }
                
-                
+
+            dataArr = calibrateData(dataArr);
             for(int p = 0; p < dataArr.size(); p++){
                     cout << dataArr[p].macAddresses << endl;
                     for(int k = 0; k < dataArr[p].signalStrengths.size(); k++){
                         cout << dataArr[p].signalStrengths[k] << endl;
                     }
-                    
-
-
             }
-            
+            return dataArr;
 
+}
+
+void createStandardisedFile(){
+
+    
 }
 
 int main(){
     int choice = 0;
     vector<filesystem::path> filepaths;
+    vector<macID_signalStrength> standaradisedData;
     cout << " Welcome to the Calibration programme " << endl;
     cout << "Please select the file you want to calibrate from " << endl;
 
@@ -103,7 +120,7 @@ int main(){
     
     }
     cin >> choice;
-    CalibrateData(filepaths[choice - 1]);
+    standaradisedData = sortData(filepaths[choice - 1]);
     
 
 
